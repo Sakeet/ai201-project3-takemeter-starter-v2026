@@ -63,3 +63,11 @@ If a post supports its point with something you could look up in the text (a sta
 1. "Given how ODI frequency is going down, I don't think anyone will ever break Kohli's record" — fact or claim? Chose fact: ODI frequency is checkable from the schedule, even though the conclusion is a prediction.
 2. "Check his DNA, this bugger is a mutant for sure. God, I am gonna miss this guy." — joke or reaction? Chose reaction: main purpose is the feeling.
 3. "hitting his prime at 37" — fact, claim, or reaction? Chose claim: says he's at his peak, which people could argue, with no stat in the text.
+
+## Stress test (8 AI-written boundary posts)
+- Labeled 8; 5 matched my rule first try.
+- Missed 2 ("Rohit's captaincy is the reason we won", "Gill is the future") — labeled fact because I agreed with them. Corrected to claim. Lesson: label what the text supports, not what I believe.
+- Found a second boundary: fact vs reaction ("Starc took 6 wickets today, what a spell, chills!!").
+
+## Secondary rule (fact vs reaction)
+If a post gives two or more checkable details, it's fact, even if it also reacts. If it gives one stat and the rest is emotion, it's reaction.
