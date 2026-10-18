@@ -10,7 +10,7 @@ Most ODI 100s against a team: 10 Kohli vs SL, 10 Kohli vs WI, 9 Sachin vs Aus…
 Is it too much to ask 4 centuries in three matches? - J
 another Englishman chasing Tendulkar’s record…. smh - J
 9 sixes. Bro can’t get himself out in trivandram - J
-Given how ODI frequency is going down, I don’t think anyone will ever break Kohli’s record… Crazy stat - C
+Given how ODI frequency is going down, I don’t think anyone will ever break Kohli’s record… Crazy stat - N
 This guy isn’t going anywhere. Runs follows my brother. - C
 GOAT 🐐 - F
 hitting his prime at 37 - F
@@ -50,10 +50,16 @@ F — Mostly feeling or reaction, with nothing to argue about.
 J — A joke, teasing, or sarcasm, often using community memes like "Koach" or "Trivandrum".
    Example: "Koach still unbeaten at Trivandrum 💀"
 
-## Hard cases
-1. "Given how ODI frequency is going down, I don't think anyone will ever break Kohli's record" — N or C? Chose C: the reason isn't a checkable fact.
-2. "Check his DNA, this bugger is a mutant for sure. God, I am gonna miss this guy." — J or F? Chose F: main purpose is the feeling.
-3. "hitting his prime at 37" — N, C, or F? Chose F: main purpose is amazement.
-
-## Decision rule (draft)
+## Secondary rule (joke vs reaction)
 When a comment mixes a joke with a feeling, label it by its main purpose.
+
+## Labels
+fact, claim, reaction, joke (definitions in label_definitions.txt)
+
+## Decision rule (hardest boundary: fact vs claim)
+If a post supports its point with something you could look up in the text (a stat, a record, a schedule, a quote), it's fact, even if the conclusion is a prediction. If the support is just an opinion, a feeling, or nothing at all, it's claim. Label from the text only, not from what I know about cricket.
+
+## Hard cases
+1. "Given how ODI frequency is going down, I don't think anyone will ever break Kohli's record" — fact or claim? Chose fact: ODI frequency is checkable from the schedule, even though the conclusion is a prediction.
+2. "Check his DNA, this bugger is a mutant for sure. God, I am gonna miss this guy." — joke or reaction? Chose reaction: main purpose is the feeling.
+3. "hitting his prime at 37" — fact, claim, or reaction? Chose claim: says he's at his peak, which people could argue, with no stat in the text.

@@ -5,6 +5,7 @@
 #
 # Delete the examples below and put yours in.
 
-analysis: makes an argument backed by a specific, checkable fact
-hot_take: a confident claim with no support offered
-reaction: an immediate response to something that just happened
+fact: uses a number or checkable fact to inform or support a point, not just to react or joke
+claim: makes a claim or opinion someone could disagree with, with no fact to back it up
+reaction: mostly feeling or reaction, with nothing to argue about
+joke: a joke, teasing, or sarcasm, often using community memes
