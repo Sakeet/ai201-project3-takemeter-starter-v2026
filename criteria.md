@@ -67,7 +67,7 @@ No label makes up more than 50% of labels.csv.
 **Why this target:** In my first thread (the Kohli century), about two-thirds of the comments were reaction or joke. Match and celebration threads lean heavily that way, so if I don't collect from debate threads, reaction could dominate and the model would learn to guess it. Capping at 50% forces me to collect enough fact and claim posts.
 
 ## 4.
-When a staff member labels the same posts, we agree on at least 60% of them.
+When a staff member labels the same 30 posts next unit, we agree on at least 60% of them.
 
 **Why this target:** In my stress test I mixed up fact and claim, labeling posts like "Gill is the future of Indian batting" as fact when they had no checkable support. If that boundary is hard for me, someone else may draw it differently, so I set agreement at 60% rather than higher.
 
