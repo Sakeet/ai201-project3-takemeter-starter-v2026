@@ -39,140 +39,171 @@
 
 ## What This Does
 
-<!-- Your community, and what your classifier sorts posts into. Three or four
-     sentences. -->
-
-
+TakeMeter classifies comments from **r/Cricket**, a large public subreddit for cricket news, banter and discussion. It sorts each comment by what the comment is *doing*, not by whether it is true or well written: **`fact`** (uses a checkable stat, record, schedule or quote to inform or support a point), **`claim`** (an arguable opinion with nothing checkable behind it), **`reaction`** (a feeling about something that just happened), or **`joke`** (sarcasm, teasing, community memes). The goal is to separate the comments that bring evidence from the ones that only bring opinion, emotion or banter.
 
 ---
 
 ## Label Taxonomy
 
-<!-- Each label: a one-sentence definition and two real examples from your
-     reading. Then your decision rule for the hardest boundary.
+### `fact`
 
-     The decision rule is worth a point on its own and it's the thing most
-     people leave out. Every taxonomy has a hardest boundary. Name yours. -->
-
-### `label_one`
-
-**Definition:**
+**Definition:** Uses a number or checkable fact to inform or support a point, not just to react or joke.
 
 **Example 1:**
->
+> Most ODI 100s against a team: 10 Virat Kohli vs SL, 10 Virat Kohli vs WI, 9 Sachin Tendulkar vs Aus, 9 Rohit Sharma vs Aus, 8 Virat Kohli vs Aus, 8 Sachin Tendulkar vs SL. Kohli's 10th ODI century against Sri Lanka also came in Trivandrum.
 
 **Example 2:**
->
+> Completed 15k ODI runs and bring up his 55th ODI century off 75 balls, hitting 10 fours and 9 sixes at a strike rate of ~ 158. Madman
 
-### `label_two`
+### `claim`
 
-**Definition:**
+**Definition:** Makes a claim or opinion someone could disagree with, with no checkable fact to back it up.
 
 **Example 1:**
->
+> Greatest ODI batsman of all time?
 
 **Example 2:**
->
+> No one who watched that believes he can't still dominate the red ball game, have to see him in whites
+
+### `reaction`
+
+**Definition:** Mostly feeling or reaction to something that happened, with nothing to argue about.
+
+**Example 1:**
+> Such a beautiful innings
+
+**Example 2:**
+> Love it, I can't stop smiling after watching him play today. He brings out the hapiness in me whenever he is on the field.
+
+### `joke`
+
+**Definition:** A joke, teasing, or sarcasm, often using community memes like "Koach" or "Trivandrum".
+
+**Example 1:**
+> Koach still unbeaten at Trivandrum 💀
+
+**Example 2:**
+> Lmao what a fraud doesnt even have 56 tons yet
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `fact` vs `claim`
 
 **The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+If a post supports its point with something you could look up **in the text** (a stat, a record, a schedule, a quote), it's `fact`, even if the conclusion is a prediction. If the support is just an opinion, a feeling, or nothing at all, it's `claim`. I label from the text only, not from what I know about cricket. Whether the post is *true* does not decide the label.
 
-
+**Two secondary rules for other boundaries:**
+- **`fact` vs `reaction`:** if a post gives two or more checkable details, it's `fact` even if it also reacts. If it gives one stat and the rest is emotion, it's `reaction`. ("Starc took 6 wickets today, what a spell, chills!!" → `reaction`.)
+- **`joke` vs `reaction`:** when a comment mixes a joke with a feeling, label it by its main purpose. A number inside a joke or a pure reaction does not make it `fact`.
 
 ---
 
 ## The Dataset
 
-<!-- Where you collected from, how you labelled, your counts, and three hard
-     cases. -->
+**Where the posts came from:** 210 public comments from r/Cricket, collected by copy-paste from six sources:
 
-**Where the posts came from:**
+| Source | Rows |
+|---|---|
+| "55th ODI Hundred for Virat Kohli…" (Top, this month) | 30 |
+| "Honest Opinion – Mitchell Starc is overrated" (debate thread) | 30 |
+| "Updated WTC Points Table after Slow Overrate Points Deductions from England" | 35 |
+| "George Headley: The Black Bradman or Overrated?" | 12 |
+| r/Cricket comment search for "overrated" (Comments tab, many threads) | 40 |
+| "West Indies chase 250 against India at Ranchi…" | 63 |
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+I picked sources on purpose: the first thread was almost all celebration (`reaction` and `joke`), so I added debate threads for `claim`, the WTC over-rate thread for `fact`, and the West Indies chase thread to rebalance `reaction` and `joke` at the end. Text was kept whole. The only changes: line breaks joined into one line, three stat tables/lists flattened into one line, and one reply that quoted the comment above it had the quoted part removed so the two rows wouldn't nearly duplicate each other. Two comments that appeared in two sources were only kept once, and context-only replies ("Why?", "Yes.") and a deleted comment were skipped.
+
+**How I labelled them:**
+- **30 rows (`self-labelled`)**, the Kohli thread: I tagged these myself while designing the labels in Milestones 1–2, and revised several as my definitions tightened.
+- **20 rows (`cold`)**, from the Starc thread: labelled by me alone, with no help, before any pre-labelling. Kept exactly as I first labelled them, even where I'd now choose differently.
+- **160 rows (`pre-labelled, checked`)**: pre-labelled by Claude using my definitions and rules, then reviewed by me batch by batch. See the disclosure in How I Used AI.
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| `claim` | 72 | 34% |
+| `joke` | 49 | 23% |
+| `reaction` | 47 | 22% |
+| `fact` | 42 | 20% |
+| **Total** | 210 | 100% |
+
+No label is above 34%, well under both the 70% cap and my own 50% target.
 
 **Three hard cases**
 
-<!-- Any post that made you pause: what it was, which two labels it could have
-     been, and what you chose. These are worth more than the easy 190. -->
-
 **1.**
-> *The post:*
+> *The post:* "Given how odi frequencies is going down, I don't think anyone will ever break Kohli record of over 55 odi centuries. Crazy stat"
 >
-> *Could have been:*
+> *Could have been:* `fact` or `claim`
 >
-> *I chose, because:*
+> *I chose, because:* `fact`. I first called it `claim` because the conclusion is a prediction, then changed my mind: ODI frequency going down is checkable from the fixture list. This post is where my fact-vs-claim rule came from: checkable support makes it `fact`, even if the conclusion is a prediction.
 
 **2.**
-> *The post:*
+> *The post:* "Check his DNA, this bugger is a mutant for sure. God, I am gonna miss this guy."
 >
-> *Could have been:*
+> *Could have been:* `joke` or `reaction`
 >
-> *I chose, because:*
+> *I chose, because:* `reaction`. "Mutant" is a joke, but the main purpose of the comment is the feeling ("gonna miss this guy"). This became my joke-vs-reaction rule: label by main purpose.
 
 **3.**
-> *The post:*
+> *The post:* "hitting his prime at 37..."
 >
-> *Could have been:*
+> *Could have been:* `fact`, `claim` or `reaction`
 >
-> *I chose, because:*
+> *I chose, because:* `claim`. I labelled it two different ways on two different days (first `reaction`, then `claim`), which showed me this boundary was the hardest. I first wanted to justify it with what I know about Kohli's form, but the label has to come from the text alone: "hitting his prime" is something people could argue with, and the post gives no stat to back it up.
+
+**Other findings while labelling**
+- **Questions don't fit any label cleanly.** Posts like "Anyone know why nz didn't get any penalties…" are neither fact, opinion, feeling nor joke. I put them in `claim` and noted it each time.
+- **Possible keyword shortcut:** 40 rows came from a search for "overrated", and almost all of them are `claim`. The model might learn "overrated means claim" instead of my actual definition.
+- **My two rules can disagree.** "Lmao . Dubey scored 7(10) on this pitch. Dude is overrated af" has one stat (the fact-vs-reaction rule says `reaction`) but uses it to support a claim (the fact-vs-claim rule says `fact`). I chose `fact`.
+- **My cold labels don't always follow my own rule.** For example, I labelled "Last 2 years averages 38 away from home" as `claim` cold, even though it gives a checkable stat. I left it as-is because cold labels are the honesty check.
 
 ---
 
 ## The Training Run
 
-<!-- Your starting model, your settings, and anything you changed and why. -->
+**Base model:** `distilbert-base-uncased`
 
-**Base model:**
+**Settings:** 3 epochs, learning rate 2e-5, batch size 16, max length 128 tokens, seed 42. Trained on **CPU** (PyTorch 2.14.1+cpu, Windows, Python 3.12.7); the run took about 2 minutes 16 seconds.
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Anything I changed from the defaults, and why:** Nothing except the label map, which I set to `LABELS = ["fact", "claim", "reaction", "joke"]` to match my CSV. I kept every hyperparameter at its default so this run is a clean starting point for next unit's seed comparison.
 
-**Anything I changed from the defaults, and why:**
+**Split sizes:** train 146 · val 32 · test 32 (70/15/15, done by the notebook from one unsplit `labels.csv`).
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+| Label | Train | Val | Test |
+|---|---|---|---|
+| `fact` | 29 | 7 | 6 |
+| `claim` | 50 | 11 | 11 |
+| `reaction` | 33 | 7 | 7 |
+| `joke` | 34 | 7 | 8 |
 
-
+**`fact` has only 6 and `reaction` only 7 examples in the test split**, so their F1 scores are computed on very few posts and will move a lot between seeds next unit.
 
 ---
 
 ## How I Used AI
 
-<!-- Two specific moments — what you asked, what came back, what you changed.
+I used Claude throughout this unit as a guide. It walked me through setup, asked me questions while I designed labels, and did the CSV formatting and pre-labelling described below.
 
-     ⚠️ Plus disclosure of any pre-labelling. If you had a model pre-label a
-     batch and then read and corrected every one, say that. It's an allowed
-     workflow and disclosing it costs you nothing. Not disclosing it is the
-     problem. -->
+**Moment 1: the stress test**
 
-**Moment 1**
+- *What I asked for:* Eight made-up r/Cricket comments that sit on my label boundaries, without telling me which label it intended.
+- *What came back:* Eight tricky posts, like "Gill is the future of Indian batting, mark my words" and "Starc took 6 wickets today, what a spell, chills!!"
+- *What I changed:* I labelled two pure opinions ("Rohit's captaincy is the reason we won", "Gill is the future") as `fact` because I agreed with them. I corrected both to `claim` and added "label from the text, not what I believe" to my rule. The Starc post showed I had no rule for fact vs reaction, so I added the two-or-more-details rule.
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+**Moment 2: designing the `fact` label**
 
-**Moment 2**
+- *What I asked for:* Help turning my reading notes into labels.
+- *What came back:* Instead of giving me labels, Claude asked me to sort the comments into piles myself, then pointed out that my first definition of N ("contains a number or fact") didn't match my own tags. I had put "55 centuries is bonkers" in reaction and "fraud doesnt even have 56 tons" in joke, even though both contain numbers.
+- *What I changed:* I narrowed `fact` to "uses a number or checkable fact to inform or support a point" and added the rule that `joke` or `reaction` wins if the number is only part of a joke or a feeling.
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+**Acceptance criteria:** Claude did not choose my numbers or write my reasons. It offered option ranges, I picked the targets (including changing criterion 1 from 0.50 to 0.60 myself), and I answered its questions about my data. It then cleaned up the grammar of my answers into the "Why this target" sentences.
 
 **Pre-labelling disclosure:**
+- **160 of 210 rows** (marked `pre-labelled, checked`) were pre-labelled by Claude using my four definitions and my decision rules. I pasted raw Reddit pages; Claude extracted the comments, removed usernames, vote counts and ads, wrote the CSV, and flagged borderline rows with a note explaining the choice.
+- I reviewed each batch (10, 35, 12, 40, 33 and 30 rows) and **accepted all of Claude's labels without changes**. Some of those reviews were fast, so next unit's agreement report is a fair check on how carefully I did this.
+- **20 rows (`cold`)** were labelled by me alone before any pre-labelling, and **30 rows (`self-labelled`)** were labelled by me during label design.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
@@ -394,3 +425,4 @@ learned:**
 ---
 
 📖 **How to run this project: [RUNNING.md](RUNNING.md)**
+
