@@ -72,7 +72,7 @@ When a staff member labels the same posts, we agree on at least 60% of them.
 **Why this target:** In my stress test I mixed up fact and claim, labeling posts like "Gill is the future of Indian batting" as fact when they had no checkable support. If that boundary is hard for me, someone else may draw it differently, so I set agreement at 60% rather than higher.
 
 ## 5.
-The model's high-confidence predictions are at least 10 percentage points more accurate than its low-confidence predictions.
+The model's most-confident third of test predictions is at least 10 percentage points more accurate than its least-confident third.
 
 **Why this target:** Posts the model is unsure about are probably the hard, borderline ones, like "hitting his prime at 37" (claim or reaction?) or posts mixing a stat with a reaction. Those were hard for me too. If the model's confidence means anything, its confident predictions should be right noticeably more often than its unsure ones.
 

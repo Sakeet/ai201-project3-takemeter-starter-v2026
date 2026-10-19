@@ -182,6 +182,10 @@ No label is above 34%, well under both the 70% cap and my own 50% target.
 
 ---
 
+**Stretch feature (declared before building):** A second training run with one hyperparameter changed: `EPOCHS` from 3 to 5, everything else identical (same seed, same split). Reason: training loss was still falling at epoch 3 (1.380 → 1.324 → 1.269), so the model may not have finished learning. The first run's metrics are kept in `results_run1_epochs3.json`; the second run's in `results_run2_epochs5.json`.
+
+---
+
 ## How I Used AI
 
 I used Claude throughout this unit as a guide. It walked me through setup, asked me questions while I designed labels, and did the CSV formatting and pre-labelling described below.
