@@ -96,6 +96,8 @@ If a post supports its point with something you could look up **in the text** (a
 - **`fact` vs `reaction`:** if a post gives two or more checkable details, it's `fact` even if it also reacts. If it gives one stat and the rest is emotion, it's `reaction`. ("Starc took 6 wickets today, what a spell, chills!!" → `reaction`.)
 - **`joke` vs `reaction`:** when a comment mixes a joke with a feeling, label it by its main purpose. A number inside a joke or a pure reaction does not make it `fact`.
 
+**Why `joke` exists (a finding, not a planned label):** I started with three piles: stats, claims, and feelings. In my Milestone 1 notes, five Kohli-thread comments fit none of them ("Koach still unbeaten at Trivandrum 💀", "Kohli Stats™ are back mfs"). They weren't evidence, weren't sincere opinions, and weren't sincere feelings: they were sarcasm and community in-jokes. Several even contained numbers ("fraud doesnt even have 56 tons yet"), which would have wrongly pushed them into `fact` under a three-label system. So `joke` came out of the data rather than out of my plan.
+
 ---
 
 ## The Dataset
