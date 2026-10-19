@@ -52,62 +52,29 @@ whether you hit them:
 ---
 
 ## 1.
+Overall accuracy on the held-out test set is at least 0.60 across all three seeds.
 
-<!-- Your criterion. It must name a number. -->
-
-
-
-**Why this target:**
-
-
-
----
+**Why this target:** I picked 0.60 because the model would be right 3 out of 5 times, which I'd call useful. With my four labels (fact, claim, reaction, joke), random guessing only gets about 25%, so 0.60 is well above chance.
 
 ## 2.
+Every label (fact, claim, reaction, joke) has an F1 of at least 0.40 on the held-out set.
 
-<!-- Your criterion. -->
-
-
-
-**Why this target:**
-
-
-
----
+**Why this target:** I expect the model to struggle to tell claim, reaction, and joke apart, because in r/Cricket jokes often sound like reactions and sarcasm can sound like a claim. So I set a lower bar per label than for overall accuracy.
 
 ## 3.
+No label makes up more than 50% of labels.csv.
 
-<!-- Your criterion. -->
-
-
-
-**Why this target:**
-
-
-
----
+**Why this target:** In my first thread (the Kohli century), about two-thirds of the comments were reaction or joke. Match and celebration threads lean heavily that way, so if I don't collect from debate threads, reaction could dominate and the model would learn to guess it. Capping at 50% forces me to collect enough fact and claim posts.
 
 ## 4.
+When a staff member labels the same posts, we agree on at least 60% of them.
 
-<!-- Your criterion. -->
-
-
-
-**Why this target:**
-
-
-
----
+**Why this target:** In my stress test I mixed up fact and claim, labeling posts like "Gill is the future of Indian batting" as fact when they had no checkable support. If that boundary is hard for me, someone else may draw it differently, so I set agreement at 60% rather than higher.
 
 ## 5.
+The model's high-confidence predictions are at least 10 percentage points more accurate than its low-confidence predictions.
 
-<!-- Your criterion. -->
-
-
-
-**Why this target:**
-
-
+**Why this target:** Posts the model is unsure about are probably the hard, borderline ones, like "hitting his prime at 37" (claim or reaction?) or posts mixing a stat with a reaction. Those were hard for me too. If the model's confidence means anything, its confident predictions should be right noticeably more often than its unsure ones.
 
 ---
 
