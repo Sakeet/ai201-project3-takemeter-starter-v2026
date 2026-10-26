@@ -1,0 +1,209 @@
+[
+  {
+    "seed": 42,
+    "n_test": 36,
+    "accuracy": 0.4166666666666667,
+    "f1_macro": 0.2476689976689977,
+    "per_label": {
+      "fact": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 6
+      },
+      "claim": {
+        "precision": 0.3333333333333333,
+        "recall": 0.45454545454545453,
+        "f1": 0.38461538461538464,
+        "support": 11
+      },
+      "reaction": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 7
+      },
+      "joke": {
+        "precision": 0.47619047619047616,
+        "recall": 0.8333333333333334,
+        "f1": 0.6060606060606061,
+        "support": 12
+      }
+    },
+    "confusion": {
+      "fact": {
+        "fact": 0,
+        "claim": 6,
+        "reaction": 0,
+        "joke": 0
+      },
+      "claim": {
+        "fact": 0,
+        "claim": 5,
+        "reaction": 0,
+        "joke": 6
+      },
+      "reaction": {
+        "fact": 0,
+        "claim": 2,
+        "reaction": 0,
+        "joke": 5
+      },
+      "joke": {
+        "fact": 0,
+        "claim": 2,
+        "reaction": 0,
+        "joke": 10
+      }
+    },
+    "confidence": {
+      "mean_when_right": 0.33631911873817444,
+      "mean_when_wrong": 0.33235761523246765,
+      "accuracy_most_confident_third": 0.4166666666666667,
+      "accuracy_least_confident_third": 0.3333333333333333,
+      "n_per_third": 12
+    },
+    "device": "cpu",
+    "device_name": "CPU",
+    "torch_version": "2.14.1+cpu",
+    "max_length": 128
+  },
+  {
+    "seed": 7,
+    "n_test": 36,
+    "accuracy": 0.5,
+    "f1_macro": 0.30773955773955775,
+    "per_label": {
+      "fact": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 6
+      },
+      "claim": {
+        "precision": 0.4230769230769231,
+        "recall": 1.0,
+        "f1": 0.5945945945945946,
+        "support": 11
+      },
+      "reaction": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 7
+      },
+      "joke": {
+        "precision": 0.7,
+        "recall": 0.5833333333333334,
+        "f1": 0.6363636363636364,
+        "support": 12
+      }
+    },
+    "confusion": {
+      "fact": {
+        "fact": 0,
+        "claim": 6,
+        "reaction": 0,
+        "joke": 0
+      },
+      "claim": {
+        "fact": 0,
+        "claim": 11,
+        "reaction": 0,
+        "joke": 0
+      },
+      "reaction": {
+        "fact": 0,
+        "claim": 4,
+        "reaction": 0,
+        "joke": 3
+      },
+      "joke": {
+        "fact": 0,
+        "claim": 5,
+        "reaction": 0,
+        "joke": 7
+      }
+    },
+    "confidence": {
+      "mean_when_right": 0.33531704545021057,
+      "mean_when_wrong": 0.3472778797149658,
+      "accuracy_most_confident_third": 0.4166666666666667,
+      "accuracy_least_confident_third": 0.5833333333333334,
+      "n_per_third": 12
+    },
+    "device": "cpu",
+    "device_name": "CPU",
+    "torch_version": "2.14.1+cpu",
+    "max_length": 128
+  },
+  {
+    "seed": 2024,
+    "n_test": 36,
+    "accuracy": 0.4166666666666667,
+    "f1_macro": 0.2517482517482518,
+    "per_label": {
+      "fact": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 6
+      },
+      "claim": {
+        "precision": 0.4,
+        "recall": 0.5454545454545454,
+        "f1": 0.46153846153846156,
+        "support": 11
+      },
+      "reaction": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 7
+      },
+      "joke": {
+        "precision": 0.42857142857142855,
+        "recall": 0.75,
+        "f1": 0.5454545454545454,
+        "support": 12
+      }
+    },
+    "confusion": {
+      "fact": {
+        "fact": 0,
+        "claim": 2,
+        "reaction": 0,
+        "joke": 4
+      },
+      "claim": {
+        "fact": 0,
+        "claim": 6,
+        "reaction": 0,
+        "joke": 5
+      },
+      "reaction": {
+        "fact": 0,
+        "claim": 4,
+        "reaction": 0,
+        "joke": 3
+      },
+      "joke": {
+        "fact": 0,
+        "claim": 3,
+        "reaction": 0,
+        "joke": 9
+      }
+    },
+    "confidence": {
+      "mean_when_right": 0.31446683406829834,
+      "mean_when_wrong": 0.3059493899345398,
+      "accuracy_most_confident_third": 0.5,
+      "accuracy_least_confident_third": 0.16666666666666666,
+      "n_per_third": 12
+    },
+    "device": "cpu",
+    "device_name": "CPU",
+    "torch_version": "2.14.1+cpu",
+    "max_length": 128
+  }
+]
