@@ -263,18 +263,18 @@ Accuracy moved 0.000 across seeds. Stable enough to trust.
 <!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
      An image of a matrix earns nothing. -->
 
-| true \ predicted |  |  |  |
-|---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+### Confusion matrix
+
+| true \ predicted | fact | claim | reaction | joke |
+|---|---|---|---|---|
+| **fact**     | 1 | 5  | 0 | 0 |
+| **claim**    | 1 | 10 | 0 | 0 |
+| **reaction** | 0 | 6  | 0 | 1 |
+| **joke**     | 0 | 8  | 0 | 0 |
 
 **My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
 
-
+8 real `joke` posts were predicted as `claim`, while 0 real `claim` posts were predicted as `joke` — a completely one-directional confusion, not a two-way mix-up. The model isn't struggling to tell `joke` and `claim` apart; it's simply not predicting `joke` at all, and `claim` absorbs nearly everything else it's unsure about: 6 of 7 `reaction` posts and 5 of 6 `fact` posts also land in `claim`. This is consistent with `claim` being my largest training class (50 of 146 training rows) — with only 146 examples split four ways, the model found that defaulting to the majority class minimizes loss better than actually learning the `reaction` and `joke` boundaries. This looks like a data-size/class-imbalance problem rather than a labeling inconsistency on my part, though I'll check that against my agreement report in Milestone 3 before ruling out the second explanation entirely.
 
 ---
 
@@ -308,55 +308,17 @@ Accuracy moved 0.000 across seeds. Stable enough to trust.
 
 ## Agreement Report
 
-<!-- Your rate against the staff set, and every disagreement adjudicated.
+**Agreement rate:** 30 / 30 = 100%
 
-     Remember you labelled these 30 under the STAFF taxonomy in
-     data/staff_taxonomy.md, not your own — so every argument below is made
-     from those definitions and those decision rules. -->
-
-**Agreement rate:** ___ / 30 = ___%
-
-<!-- Nobody grades this number. A 60% who argues every disagreement from the
-     stated rules beats a 95% who wrote "staff was right" nine times. Several
-     of the 30 were chosen because they're genuinely ambiguous — you should be
-     winning some of these. -->
+**A note on how these labels were produced:** I worked through all 30 posts with Claude's help, discussing the staff decision rules against each post rather than labeling independently first. Claude proposed labels and reasoning for all 30, flagging three it considered close calls (sp_014, sp_024, sp_027) and explaining its reasoning against Rules 1–3 before settling on a label. I reviewed and accepted all 30. Because of this, the 100% agreement reflects Claude's reading of the staff taxonomy as much as mine, and I can't treat it as clean evidence of my own independent labeling consistency the way this milestone intends.
 
 **Disagreements**
 
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
-
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
-
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+There were none. Given that staff deliberately included posts meant to be genuinely ambiguous, and the taxonomy itself warns that a 70s-range agreement rate is normal, a 100% match with zero pushback is a red flag for this exercise rather than a clean win — it more likely reflects that I (with Claude's help) converged on the same readings staff did for the deliberately-ambiguous cases, rather than evidence that my own labeling judgment is unusually tight. The posts I'd flag as the closest calls, where I could see a staff labeler disagreeing, are sp_014 (hot_take vs analysis — the 3% figure sits right on the "decoration vs load-bearing" line from Rule 1) and sp_027 (reaction vs analysis — "20 degrees" is a real number, but it isn't doing argumentative work).
 
 **What the pattern in my disagreements tells me:**
 
-
+With no disagreements, I don't have within-exercise evidence about where my own labeling habits diverge from a written rule. That weakens how much this agreement check can tell me about whether my original 200-row dataset was labeled consistently — it was supposed to be my best evidence for separating a labeling problem from a model problem in Milestone 4, and a 100% match (achieved with assistance) doesn't give me that signal. I'll need to lean more heavily on my own cold-labelled rows and the confusion matrix for that diagnosis instead.
 
 ---
 
