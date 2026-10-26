@@ -1,0 +1,200 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 32,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": true,
+  "scores": {
+    "n": 32,
+    "accuracy": 0.25,
+    "f1_macro": 0.2552239427239427,
+    "per_label": {
+      "claim": {
+        "precision": 0.2727272727272727,
+        "recall": 0.2727272727272727,
+        "f1": 0.2727272727272727,
+        "support": 11
+      },
+      "fact": {
+        "precision": 0.13333333333333333,
+        "recall": 0.3333333333333333,
+        "f1": 0.19047619047619044,
+        "support": 6
+      },
+      "joke": {
+        "precision": 0.4,
+        "recall": 0.25,
+        "f1": 0.3076923076923077,
+        "support": 8
+      },
+      "reaction": {
+        "precision": 1.0,
+        "recall": 0.14285714285714285,
+        "f1": 0.25,
+        "support": 7
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "He just doubled his IPL value",
+      "gold": "joke",
+      "predicted": "fact"
+    },
+    {
+      "text": "Don't give a fuck anymore. I have become like those cranky 80 year old men who whine about the new generation. I hate T20s. And I hate flat pitches. Fuck this shit.",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Great post OP. I don't know how much truth in is in these apocryphal tales about Headley. Apparently, he had tactic of tacking spinners by hammering the ball as hard as he could straight down at them early in their spells. The goal was to sting and or worse hurt their bowling fingers. Other tactic was to target fielding positions where the opposition's bowlers were stationed. The goal was to make them run as much as possible and tire them early.",
+      "gold": "fact",
+      "predicted": "claim"
+    },
+    {
+      "text": "Can't believe my man used to be compared",
+      "gold": "joke",
+      "predicted": "joke"
+    },
+    {
+      "text": "He reinvented his game a lot, increased his strike rate and improved his batting in tests too",
+      "gold": "claim",
+      "predicted": "fact"
+    },
+    {
+      "text": "Underrated nkr >>>>> overrated dubey",
+      "gold": "claim",
+      "predicted": "joke"
+    },
+    {
+      "text": "Such a beautiful innings",
+      "gold": "reaction",
+      "predicted": "fact"
+    },
+    {
+      "text": "9 sixes... Bro can't get himself out in trivandram",
+      "gold": "joke",
+      "predicted": "claim"
+    },
+    {
+      "text": "Serves us right tbh. Well deserved loss. Have reduced bowlers to bowling machines. THIS IS NOT CRICKET",
+      "gold": "reaction",
+      "predicted": "fact"
+    },
+    {
+      "text": "I do, so I've worked it out. Assuming I've got my sums right: Matches 47, Innings 74, Not outs 9, Runs 4460, Top score 234*, Average 68.61, 100s 14, 50s 22. And here are your Brucie Bonus Lancashire League stats: Matches 150, Innings 139, Not outs 39, Runs 5893, Top score 162*, Average 58.93, 100s 11, 50s 41. And in the Worsley Cup, although he didn't play in it much: Matches 10, Innings 10, Not outs 3, Runs 526, Top score 189, Average 75.14, 100s 2, 50s 1.",
+      "gold": "fact",
+      "predicted": "fact"
+    },
+    {
+      "text": "Mayank Yadav the bowler >>>>>> Mayank Yadav the catcher",
+      "gold": "joke",
+      "predicted": "joke"
+    },
+    {
+      "text": "why? he use to a get a lot of phainty , a terrible odi bowler, people overrate him so much",
+      "gold": "claim",
+      "predicted": "claim"
+    },
+    {
+      "text": "Flat track bullies got bullied",
+      "gold": "joke",
+      "predicted": "claim"
+    },
+    {
+      "text": "Inb4 Starc wrecks India tomorrow in the first session by taking all the remaining 7 wickets for 20 odd runs. Don't jinx OP !",
+      "gold": "claim",
+      "predicted": "fact"
+    },
+    {
+      "text": "Thank you koach for making my Sunday great.",
+      "gold": "reaction",
+      "predicted": "joke"
+    },
+    {
+      "text": "If BCCI feels giving these absolute roads and sixes galore is increasing viewership then they are absolutely mistaken. Bring back the bat-ball balance before it's too late",
+      "gold": "claim",
+      "predicted": "claim"
+    },
+    {
+      "text": "Better to declare winner of toss as winner of match and play ads for entirety of sport time",
+      "gold": "joke",
+      "predicted": "fact"
+    },
+    {
+      "text": "England were absolutely ludicrous in thos test though. They were 14 over short one day, and if they'd been calling no-balls correctly they probably would have been 15 short!",
+      "gold": "fact",
+      "predicted": "claim"
+    },
+    {
+      "text": "I think the discussion is about test matches. Nobody thinks he's overrated on ODIs.",
+      "gold": "reaction",
+      "predicted": "fact"
+    },
+    {
+      "text": "hitting his prime at 37...",
+      "gold": "claim",
+      "predicted": "fact"
+    },
+    {
+      "text": "They're lucky it was only 5 after allowances. They bowled 104 overs in 8hrs 40 minutes, so 12 overs an hour. Should have bowled 130 overs in that time before allowances, so they've been given around 20 overs of allowances to get it down to 5 overs behind.",
+      "gold": "fact",
+      "predicted": "fact"
+    },
+    {
+      "text": "Is it too much to ask 4 centuries in three matches?",
+      "gold": "joke",
+      "predicted": "fact"
+    },
+    {
+      "text": "Head's 163 is overrated as f. That's one of the worst Indian bowling sides without Bumrah. Head himself has far better test knocks.",
+      "gold": "fact",
+      "predicted": "claim"
+    },
+    {
+      "text": "No one who watched that believes he can't still dominate the red ball game, have to see him in whites",
+      "gold": "claim",
+      "predicted": "fact"
+    },
+    {
+      "text": "Pace is overrated.",
+      "gold": "claim",
+      "predicted": "claim"
+    },
+    {
+      "text": "I know Over rate is important and maintaining a sub standard rate deserves punishment and yet i do not feel it's good whenever any team loses points for Over rate because it's an aspect I care very less about.",
+      "gold": "claim",
+      "predicted": "fact"
+    },
+    {
+      "text": "12 overs behind turns a win into a loss Good. Anyone 12 overs behind in a single day after allowances should have Test status stripped tbh. People are paying to watch you play cricket, not piss about in a fucking field.",
+      "gold": "claim",
+      "predicted": "fact"
+    },
+    {
+      "text": "another match i'm glad i didn't see",
+      "gold": "reaction",
+      "predicted": "joke"
+    },
+    {
+      "text": "While I think #2 is way higher than I'd put him, I'd hardly call him overrated. At an ave of 26 with 700 test wickets across 180 odd tests, he definitely has earned the right to be included here. By the way, I'm an Australian.",
+      "gold": "fact",
+      "predicted": "claim"
+    },
+    {
+      "text": "55 centuries is bonkers.",
+      "gold": "reaction",
+      "predicted": "claim"
+    },
+    {
+      "text": "Body language doesn't look good hmm where have I seen this before",
+      "gold": "joke",
+      "predicted": "claim"
+    },
+    {
+      "text": "Surely it's gonna be even worse next match if they don't play a spinner??? Unless Root's planning on bowling 20 overs",
+      "gold": "claim",
+      "predicted": "fact"
+    }
+  ]
+}
