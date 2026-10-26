@@ -225,20 +225,20 @@ I used Claude throughout this unit as a guide. It walked me through setup, asked
 
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.250 | 0.344 | +0.094 |
+| Macro F1 | 0.255 | 0.188 | -0.068 |
+| F1 — `claim` | 0.273 | 0.500 | +0.227 |
+| F1 — `fact` | 0.190 | 0.250 | +0.060 |
+| F1 — `joke` | 0.308 | 0.000 | -0.308 |
+| F1 — `reaction` | 0.250 | 0.000 | -0.250 |
 
 **What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+
+I predict my trained model will beat the baseline most clearly on `fact` vs `claim`, since the baseline has no training signal for my specific text-only evidence rule, and will struggle most on `reaction` vs `joke` where my labels depend on subtle intent judgments a zero-shot model can't learn from a one-line definition.
 
 **What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
 
-
+My prediction was partly right: the trained model did beat the baseline clearly on `claim` (+0.227) and `fact` (+0.060). But I didn't predict this: F1 on `joke` and `reaction` dropped to 0.000 — worse than the baseline, which guesses randomly but at least guesses all four labels sometimes. Overall accuracy went up (+0.094) only because `claim` is my largest training class (34%), so the model likely learned to lean on `claim` and `fact` and stopped predicting `joke` or `reaction` at all. Macro F1 actually fell (-0.068), which is the number that catches this — accuracy alone would have hidden it. This looks like a class-imbalance problem, not evidence my fine-tuning "worked." I expect the confusion matrix in Milestone 2 to show `joke` and `reaction` posts being misclassified as `claim` or `fact`.
 
 ---
 
@@ -247,13 +247,16 @@ I used Claude throughout this unit as a guide. It walked me through setup, asked
 <!-- Five criteria across three seeds. The notebook's section 6 prints the
      spread table; the Target and Verdict columns are yours. -->
 
-| Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
-|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| Measure | Seed 42 | Seed 7 | Seed 2024 | Spread |
+|---|---|---|---|---|
+| Overall accuracy | 0.344 | 0.344 | 0.344 | 0.000 |
+| Macro F1 | 0.188 | 0.128 | 0.128 | 0.060 |
+| F1 — `fact` | 0.250 | 0.000 | 0.000 | 0.250 |
+| F1 — `claim` | 0.500 | 0.512 | 0.512 | 0.012 |
+| F1 — `reaction` | 0.000 | 0.000 | 0.000 | 0.000 |
+| F1 — `joke` | 0.000 | 0.000 | 0.000 | 0.000 |
+
+Accuracy moved 0.000 across seeds. Stable enough to trust.
 
 ### Confusion matrix
 
