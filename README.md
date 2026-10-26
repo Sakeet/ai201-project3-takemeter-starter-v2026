@@ -376,6 +376,16 @@ This matches my own labeling notes from Milestone 1: several of my `reaction`-la
 
 ---
 
+## Stretch: Second measured improvement (declared before building)
+
+**What I'm planning:** Add ~30 new `reaction` examples to `labels.csv`, the same way I added `joke` examples in Milestone 5 — sourced from fresh r/Cricket threads, filtered for genuine `reaction` posts (immediate feeling, nothing to argue about) rather than `claim` or `joke`.
+
+**Which diagnosis points at it:** The per-label error write-up above shows `reaction` is still at F1 = 0.000 on every seed after my first improvement, with most `reaction` posts now landing in `joke` instead of `claim` — the same data-volume default-guessing pattern that `joke` had before its own fix. Since adding examples directly repaired `joke`'s F1 (0.000 → 0.55–0.64), the same intervention is the most evidence-backed next step for `reaction`.
+
+Results below, once the run is complete.
+
+---
+
 ## What's Still Broken
 
 **Criterion 1 (overall accuracy ≥ 0.60):** Still missed — best seed reached 0.500, still 10 points short. What I'd do next: apply the same fix that worked for `joke` to `reaction` and `fact`, since both are still at F1 = 0.000 on every seed. I stopped here because the assignment caps this unit at one change, and `joke` was the label my diagnosis named most clearly (complete collapse, smallest class alongside `reaction`).
