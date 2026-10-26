@@ -260,11 +260,6 @@ Accuracy moved 0.000 across seeds. Stable enough to trust.
 
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
-
-### Confusion matrix
-
 | true \ predicted | fact | claim | reaction | joke |
 |---|---|---|---|---|
 | **fact**     | 1 | 5  | 0 | 0 |
@@ -280,29 +275,21 @@ Accuracy moved 0.000 across seeds. Stable enough to trust.
 
 ## Verdicts and Diagnoses
 
-<!-- MET or MISSED against LAST UNIT's target. The target has to hold across
-     all three seeds, not turn up sometimes. -->
-
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | ≥ 0.60 | MISSED | Accuracy was 0.344 on all three seeds — stable, but roughly 26 points under target with zero spread, so there's no seed where it's close to met. |
+| 2 | Every label F1 | ≥ 0.40 | MISSED | Only `claim` clears 0.40 (0.50–0.51). `fact` reaches 0.40 on no seed (0.000–0.250), and `reaction` and `joke` are 0.000 on all three seeds — the model never predicts either label at all. |
+| 3 | No label > 50% | yes | MET | Largest label (`claim`) is 34% of the dataset, well under the cap, and this doesn't depend on the trained model or seed. |
+| 4 | Staff agreement ≥ 60% | ≥ 60% | MET* | 100% agreement on all 30 posts, but these labels were produced with heavy AI assistance rather than independently, so I'm treating this MET with a caveat rather than as clean evidence of my own labeling consistency (see Agreement Report). |
+| 5 | Confidence gap ≥ 10pp | ≥ 10 pp | NOT MEASURED | I didn't build confidence-score extraction in time; deferred to "What's Still Broken." |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+**Criterion 1 (overall accuracy, MISSED):** This is downstream of Criterion 2, not a separate problem. The model's accuracy is close to what you'd get from always predicting `claim` or `fact` (34% + 20% = 54% of the dataset, consistent with the ~34% accuracy achieved), so the low overall number is a direct consequence of the model never predicting two of my four labels.
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+**Criterion 2 (every label F1, MISSED):** My confusion matrix shows this clearly: 8 of my `joke` test posts were predicted as `claim` and 0 went the other way — a one-directional collapse, not a two-way confusion. `reaction` shows the same pattern (6 of 7 predicted as `claim`). This looks like a **data-size problem rather than a labeling-consistency problem**: `claim` is my largest training class (50 of 146 training rows, versus 33–34 for the others), and with only 146 training examples split four ways, the model likely found that defaulting toward the majority class minimized its training loss better than learning the harder `reaction`/`joke` boundaries.
 
-
+I would normally use my agreement report here to rule labeling-consistency in or out as a contributing cause — but as noted in Milestone 3, my 100% agreement rate was reached with heavy AI assistance rather than independent labeling, so it can't serve as reliable evidence either way. I'm treating this as an open question rather than ruling it out: the collapse is consistent with a pure data-size explanation, but I can't fully exclude that some of my own 200 training labels (particularly the 160 "pre-labelled, checked" rows I accepted quickly, per my README's AI disclosure) also contributed inconsistent examples of `reaction` and `joke` that made those labels harder to learn.
 
 ---
 
