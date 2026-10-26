@@ -182,6 +182,8 @@ No label is above 34%, well under both the 70% cap and my own 50% target.
 
 **`fact` has only 6 and `reaction` only 7 examples in the test split**, so their F1 scores are computed on very few posts and will move a lot between seeds next unit.
 
+**Update for unit 6's improvement (Milestone 5):** After Milestone 2's confusion matrix and Milestone 4's diagnosis showed `joke` collapsing to F1 = 0.000 across all seeds, I added 30 new `joke` examples (28 sourced from fresh r/Cricket threads, 2 written by me in the same style to round out the batch, flagged accordingly in `labels.csv`). This brings the dataset to 240 rows and `joke` to 79 (33%), still under the 50% cap from Criterion 3.
+
 ---
 
 **Stretch feature (declared before building):** A second training run with one hyperparameter changed: `EPOCHS` from 3 to 5, everything else identical (same seed, same split). Reason: training loss was still falling at epoch 3 (1.380 → 1.324 → 1.269), so the model may not have finished learning. The first run's metrics are kept in `results_run1_epochs3.json`; the second run's in `results_run2_epochs5.json`.
@@ -267,6 +269,8 @@ Accuracy moved 0.000 across seeds. Stable enough to trust.
 | **reaction** | 0 | 6  | 0 | 1 |
 | **joke**     | 0 | 8  | 0 | 0 |
 
+**Device:** CPU (PyTorch 2.14.1+cpu)
+
 **My biggest off-diagonal number, and what it means:**
 
 8 real `joke` posts were predicted as `claim`, while 0 real `claim` posts were predicted as `joke` — a completely one-directional confusion, not a two-way mix-up. The model isn't struggling to tell `joke` and `claim` apart; it's simply not predicting `joke` at all, and `claim` absorbs nearly everything else it's unsure about: 6 of 7 `reaction` posts and 5 of 6 `fact` posts also land in `claim`. This is consistent with `claim` being my largest training class (50 of 146 training rows) — with only 146 examples split four ways, the model found that defaulting to the majority class minimizes loss better than actually learning the `reaction` and `joke` boundaries. This looks like a data-size/class-imbalance problem rather than a labeling inconsistency on my part, though I'll check that against my agreement report in Milestone 3 before ruling out the second explanation entirely.
@@ -281,7 +285,7 @@ Accuracy moved 0.000 across seeds. Stable enough to trust.
 | 2 | Every label F1 | ≥ 0.40 | MISSED | Only `claim` clears 0.40 (0.50–0.51). `fact` reaches 0.40 on no seed (0.000–0.250), and `reaction` and `joke` are 0.000 on all three seeds — the model never predicts either label at all. |
 | 3 | No label > 50% | yes | MET | Largest label (`claim`) is 34% of the dataset, well under the cap, and this doesn't depend on the trained model or seed. |
 | 4 | Staff agreement ≥ 60% | ≥ 60% | MET* | 100% agreement on all 30 posts, but these labels were produced with heavy AI assistance rather than independently, so I'm treating this MET with a caveat rather than as clean evidence of my own labeling consistency (see Agreement Report). |
-| 5 | Confidence gap ≥ 10pp | ≥ 10 pp | NOT MEASURED | I didn't build confidence-score extraction in time; deferred to "What's Still Broken." |
+| 5 | Confidence gap ≥ 10pp | ≥ 10 pp | MET | Gap was +30.0pp (seed 42), +40.0pp (seed 7), and +20.0pp (seed 2024) — well clear of target on every seed. This data was in `results_three_seeds_before.json` all along; I hadn't extracted it until building the Milestone 6 stretch confidence check. See the stretch section below for the full numbers and what they mean. |
 
 **Diagnoses**
 
@@ -311,40 +315,80 @@ With no disagreements, I don't have within-exercise evidence about where my own 
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** Added 30 new `joke` examples to `labels.csv` (28 sourced from fresh r/Cricket threads, 2 written by me in the same style), bringing the dataset from 210 to 240 rows and `joke` from 49 (23%) to 79 (33%).
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:** Milestone 4's diagnosis for Criterion 2 identified `joke`'s complete collapse (F1 = 0.000 on all three seeds) as most likely a data-size problem — `joke` was one of the two smallest training classes, and the model appeared to default toward the majority class (`claim`) rather than learning the `joke`/`reaction` boundaries. Adding more `joke` training data was the most direct test of that diagnosis.
 
 ### Run Log — After
 
-| Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
-|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| Measure | Seed 42 | Seed 7 | Seed 2024 | Spread |
+|---|---|---|---|---|
+| Overall accuracy | 0.417 | 0.500 | 0.417 | 0.083 |
+| Macro F1 | 0.248 | 0.308 | 0.252 | 0.060 |
+| F1 — `fact` | 0.000 | 0.000 | 0.000 | 0.000 |
+| F1 — `claim` | 0.385 | 0.595 | 0.462 | 0.210 |
+| F1 — `reaction` | 0.000 | 0.000 | 0.000 | 0.000 |
+| F1 — `joke` | 0.606 | 0.636 | 0.545 | 0.091 |
 
-**Did it help, and how do I know:**
+**Device:** CPU (PyTorch 2.14.1+cpu)
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+**Did it help, and how do I know:** Yes, substantially, and the evidence is specific rather than just a higher overall number. `joke`'s F1 went from 0.000 on every seed to 0.545–0.636 — it's now the model's best-performing label, confirming my diagnosis that the original collapse was a data-volume problem, not a model or labeling-consistency issue. Overall accuracy rose on every seed (e.g., 0.344 → 0.417 on seed 42) and macro F1 roughly doubled.
 
+But the fix was incomplete, and the confusion matrix shows why: `reaction` is still at F1 = 0.000 on every seed, and the new confusion matrix shows most `reaction` posts are now predicted as `joke` instead of `claim` — the model's default-guessing behavior didn't go away, it shifted which label absorbs the overflow. `fact` also remains at F1 = 0.000 on every seed, unimproved. This matches the "one change only" constraint: I fixed the single label my diagnosis named, and the result — fixing `joke` without fixing `reaction` or `fact` — is itself informative, since it tells me `reaction` and `fact` likely need the same kind of intervention (more examples) rather than being fixed as a side effect of balancing a different label.
 
+---
+
+## Stretch: Confidence check
+
+**Target (Criterion 5):** Most-confident third of predictions ≥10pp more accurate than least-confident third, across all three seeds.
+
+| Seed | Before: most-conf third | Before: least-conf third | Before gap | After: most-conf third | After: least-conf third | After gap |
+|---|---|---|---|---|---|---|
+| 42 | 0.500 | 0.200 | +30.0pp | 0.417 | 0.333 | +8.3pp |
+| 7 | 0.600 | 0.200 | +40.0pp | 0.417 | 0.583 | −16.7pp |
+| 2024 | 0.500 | 0.300 | +20.0pp | 0.500 | 0.167 | +33.3pp |
+
+**Verdict (before): MET.** All three seeds clear the 10pp target comfortably, by 20–40 points.
+
+**Verdict (after): MISSED**, and unstable — the gap is inconsistent in direction (seed 7's least-confident third was *more* accurate than its most-confident third).
+
+**What this means:** Before my Milestone 5 fix, the model's confidence was a reasonably good signal, but only because it was almost always predicting the same label (`claim`) — being "confident" mostly meant defaulting to the safe majority-class guess, which was right more often than not. After adding `joke` examples, the model genuinely competes between `claim` and `joke` on uncertain posts rather than defaulting to one, which raised accuracy and macro F1 but made its confidence scores less informative about correctness. This is a real tradeoff I hadn't anticipated: fixing the label-collapse problem actively hurt confidence calibration. A production use of this model would need to treat confidence scores with real caution after this kind of fix, not assume they got better alongside accuracy. This also shows up in the raw numbers: mean confidence when right (~0.33–0.36) and mean confidence when wrong (~0.32–0.35) are nearly identical in both runs — the model's softmax score was never carrying much real signal about correctness, even when the *accuracy* gap looked good "before."
+
+*Note on stretch eligibility: this confidence data was already being computed by the notebook's `evaluate()` function as part of the standard pipeline; I did not declare it as a planned stretch feature before building the original training code. I'm including it here because extracting and reporting it surfaced a real, useful finding (and corrected a verdict I'd previously marked "not measured" by mistake), but I recognize it may not strictly satisfy the "declared before built" stretch rule, and I'd rather flag that plainly than claim credit I'm not sure I've earned.*
+
+---
+
+## Stretch: Per-label error write-up — `reaction`
+
+**Which label is worst:** `reaction`, F1 = 0.000 on all three "after" seeds (tied with `fact` on raw F1, but `reaction`'s confusion pattern is more informative and shows a clearer behavioral story).
+
+**What it's confused with:** Across the three "after" seeds, `reaction` posts are split almost entirely between `claim` and `joke`, and are never correctly predicted as `reaction`:
+
+| Seed | `reaction` → `claim` | `reaction` → `joke` | `reaction` → `reaction` (correct) |
+|---|---|---|---|
+| 42 | 2 | 5 | 0 |
+| 7 | 4 | 3 | 0 |
+| 2024 | 4 | 3 | 0 |
+
+**What these examples have in common:** Before my Milestone 5 fix, `reaction` posts mostly defaulted to `claim` (then the largest training class: 50 of 146 rows). After adding `joke` examples, the same kind of `reaction` posts now mostly default to `joke` instead — the destination shifted, but the underlying behavior didn't change. The model isn't learning what actually makes a `reaction` post distinct (an immediate feeling, nothing to argue about); it's routing uncertain predictions toward whichever label currently has the most training data.
+
+This matches my own labeling notes from Milestone 1: several of my `reaction`-labeled posts sit right on the `reaction`/`joke` boundary by my own decision rule ("label by main purpose" when a post mixes a joke with a feeling) — for example, "Check his DNA, this bugger is a mutant for sure. God, I am gonna miss this guy," which I labeled `reaction` specifically because it was a hard case. With only 33–34 training examples of `reaction`, the model likely never saw enough contrast between genuine feeling-only posts and joke-with-feeling posts to learn that boundary cleanly, so it falls back to whichever label dominates the training distribution. The fix that worked for `joke` — adding roughly 30 more training examples — is the most direct next step for `reaction`, and I'd expect a similar recovery in F1 based on how cleanly that fix worked the first time.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+**Criterion 1 (overall accuracy ≥ 0.60):** Still missed — best seed reached 0.500, still 10 points short. What I'd do next: apply the same fix that worked for `joke` to `reaction` and `fact`, since both are still at F1 = 0.000 on every seed. I stopped here because the assignment caps this unit at one change, and `joke` was the label my diagnosis named most clearly (complete collapse, smallest class alongside `reaction`).
 
+**Criterion 2 (every label F1 ≥ 0.40):** Still missed — `fact` and `reaction` are both still at F1 = 0.000 on all three seeds. The confusion matrix after my fix shows `reaction` posts are now mostly predicted as `joke` rather than `claim`, which tells me the model's tendency to dump uncertain predictions into whichever label has the most examples didn't go away — it just moved. The clear next step is adding examples to `reaction` and `fact` the same way I did for `joke`, which I'd expect to help based on how directly that fix worked this time. (See the stretch per-label write-up above for the full detail on `reaction`.)
 
+**Criterion 4 (staff agreement, MET with caveat):** Not broken by the numbers, but weakened as evidence. Because I labeled the 30 staff posts with heavy AI assistance rather than independently, I don't have reliable within-exercise evidence about my own labeling consistency. If I had more time, I'd redo this exercise labeling independently first, then compare against Claude's suggestions afterward, to get a cleaner signal for next time.
 
-**The gap between what I meant my labels to capture and what the model
-learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
+**The gap between what I meant my labels to capture and what the model learned:**
 
+I designed four labels meant to separate evidence (`fact`), opinion (`claim`), feeling (`reaction`), and banter (`joke`) — but the model never learned a genuine four-way boundary. Instead it learned a much cruder rule: route uncertain posts toward whichever label currently has the most training examples. Before my fix, that meant everything uncertain became `claim`; after adding `joke` examples, uncertain `reaction` posts now mostly become `joke` instead. The model isn't distinguishing feeling from banter the way my taxonomy intends — it's tracking which label is currently "winning" on data volume.
 
+**Unit 6 update:** This unit's heaviest AI involvement was in Milestone 3 (I worked through staff-label reasoning with Claude rather than independently, disclosed and caveated in the Agreement Report) and Milestone 5 (Claude filtered which r/Cricket comments genuinely fit the `joke` definition from raw threads I pasted, and wrote 2 of the 30 new training examples when I ran short on sourcing time, both flagged in `labels.csv`). In Milestone 6, Claude also helped me notice that confidence-score data already existed in both `results_three_seeds_before.json` and `results_three_seeds_after.json` (written automatically by the notebook's `evaluate()` function) and helped me extract and interpret it for the stretch confidence check — which also corrected my Criterion 5 verdict from "not measured" to "MET" for the before run.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
@@ -383,4 +427,3 @@ learned:**
 ---
 
 📖 **How to run this project: [RUNNING.md](RUNNING.md)**
-
