@@ -605,3 +605,42 @@ Did it help: yes, for the criterion it targeted. Criterion 3 went from MISSED (l
 1. Latency breakdown: time tokenization, forward pass, post-processing and log write separately inside one prediction, plus one-time model load.
 2. Load observation: run the system at 10× my normal rate (normal = 1 request/second, 10× = 10 requests/second) and report what changes in latency, errors and logging.
 3. Second measured improvement: fix the criterion 2 diagnosis (latency sensitive to machine load) by fixing PyTorch's thread count and adding a warm-up call, then re-run all five criteria three times.
+
+**Stretch: Latency breakdown**
+
+Measured with `stretch.py`, which times each stage of one prediction separately with `time.perf_counter()`, over 30 predictions (10 inputs × 3 passes) in one process. Output saved in `capstone_stretch.json`.
+
+| Stage | Median (ms) | p95 (ms) | Share of median total |
+|---|---|---|---|
+| Tokenize | 0.42 | 0.98 | 2% |
+| Forward pass | 25.25 | 39.22 | 94% |
+| Post-process (softmax, argmax) | 0.07 | 0.10 | 0% |
+| Log write | 0.96 | 1.99 | 4% |
+| **Total** | **26.85** | **41.70** | |
+| One-time model load | 20185 ms | – | per process, not per request |
+
+Real output (`python stretch.py`):
+
+    tokenize     median     0.42   p95     0.98   2%
+    forward      median    25.25   p95    39.22   94%
+    postprocess  median     0.07   p95     0.10   0%
+    log_write    median     0.96   p95     1.99   4%
+    total        median    26.85   p95    41.70
+
+What it shows: the forward pass is 94% of the time per prediction. My instrumentation (tokenize + log write) costs about 6%, so logging every call is cheap. Any latency work has to target the forward pass or the model load, not the logging layer. The one-time model load (20,185 ms, which includes importing PyTorch and transformers) is about 750 times one prediction. So the single biggest latency cost in the system is running `python inference.py` as a fresh command for each comment, which reloads the model every time. A long-running process that loads once is the real fix.
+
+**Stretch: Load observation**
+
+Normal rate is 1 request/second; 10× is 10 requests/second. 30 requests each, sent from a 10-thread pool by `run_phase()` in `stretch.py`.
+
+| Rate | Median (ms) | p95 (ms) | Max (ms) | Errors | Log entries written |
+|---|---|---|---|---|---|
+| 1/s (normal) | 24.23 | 43.67 | 76.93 | 0 | 30/30 |
+| 10/s (10×) | 17.92 | 27.69 | 65.99 | 0 | 30/30 |
+
+Real output:
+
+     1/s  median 24.23ms  p95 43.67ms  max 76.93ms  errors 0  log entries 30/30  wall 30.0s
+    10/s  median 17.92ms  p95 27.69ms  max 65.99ms  errors 0  log entries 30/30  wall 3.0s
+
+What changed: nothing broke. There were zero errors and every request was logged, even with requests from multiple threads appending to the same file. The surprise is that latency *dropped* at 10×: median 24.23 → 17.92 ms. At 10/s each request (~25 ms) finishes well before the next arrives (every 100 ms), so there is no queueing. My best explanation is that at 1/s the CPU sits idle for about 975 ms between requests and slows down, so each request starts from a colder state, while at 10/s it stays busy. I haven't proven this, but it fits criterion 2's diagnosis: my latency depends on the machine's state as much as on my code.
