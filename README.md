@@ -599,3 +599,9 @@ Did it help: yes, for the criterion it targeted. Criterion 3 went from MISSED (l
 *Moment 1: checking my criteria before committing them.* I asked Claude to run the self-check questions on my five capstone criteria without rewriting them. It pointed out that criterion 3 didn't define what an "error entry" was, criterion 4 didn't name the input, and criterion 5's test comments weren't written down, so I could have picked them after seeing results. I fixed all three before committing. Claude also drafted the 5 stat-based test inputs for criterion 5 when I was short on time; I checked each one was a `fact` by my own definition before committing, and changed the criterion's wording from "comments I write myself" to "the 5 fixed comments listed below."
 
 *Moment 2: the trial runner and the write-up.* Claude wrote `run_trials.py` from my `inference.py` and my criteria. I ran it three times before the fix and three times after. It also suggested the long-input length check as the improvement, which came directly from the criterion 3 diagnosis. Under deadline pressure, Claude also assembled most of the capstone README text from my actual results; I checked every number against my terminal output and logs.
+
+**Stretch (declared 2026-11-16, after the original submission, before building)**
+
+1. Latency breakdown: time tokenization, forward pass, post-processing and log write separately inside one prediction, plus one-time model load.
+2. Load observation: run the system at 10× my normal rate (normal = 1 request/second, 10× = 10 requests/second) and report what changes in latency, errors and logging.
+3. Second measured improvement: fix the criterion 2 diagnosis (latency sensitive to machine load) by fixing PyTorch's thread count and adding a warm-up call, then re-run all five criteria three times.
