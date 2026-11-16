@@ -441,12 +441,161 @@ I designed four labels meant to separate evidence (`fact`), opinion (`claim`), f
 ## Capstone
 
 **What This Extends**
-TakeMeter (Project 3), the r/Cricket comment classifier. New this unit: a command-line inference script (`inference.py`) that loads the trained model, classifies a comment, and writes a structured JSONL log entry for every call, plus a script (`measure_cost.py`) that measures the cost of one prediction.
+
+TakeMeter (Project 3), the r/Cricket comment classifier. New this unit: a command-line inference script (`inference.py`) that loads the trained model, classifies a comment, and writes a structured JSONL log entry for every call, plus a script (`measure_cost.py`) that measures the cost of one prediction, and a trial runner (`run_trials.py`) that tests all five capstone criteria.
 
 **The Shape**
-Shape A — Deploy and instrument. I took a classifier that only ever ran inside my notebook and gave it a run path outside the editor, structured logging of every prediction (timestamp, input, label, confidence, latency), and a measured per-prediction cost.
+
+Shape A — Deploy and instrument. I took a classifier that only ever ran inside my notebook and gave it a run path outside the editor, structured logging of every prediction (timestamp, input, label, confidence, latency, error), and a measured per-prediction cost.
 
 Out of scope: I am not retraining or fine-tuning the model, not changing the four labels or the labelled data, and not hosting it online or building a web interface.
 
 **Running It**
+
 Path B (local with logs). The model runs locally with PyTorch, and loading the model plus PyTorch needs more memory than the free host's 512 MB. The exact start command and environment are in RUNNING.md.
+
+**Instrumentation**
+
+`inference.py` writes one JSON line per call to `logs/predictions.jsonl` through `log_entry()`. Each record holds:
+
+- `timestamp`: UTC, ISO 8601
+- `input_text`: the comment as received
+- `predicted_label`: one of `fact`, `claim`, `reaction`, `joke`
+- `confidence`: softmax probability of the chosen label
+- `latency_ms`: tokenization plus forward pass, timed with `time.perf_counter()` inside `classify()`, excluding model load
+- `error`: `null` on success, the error message on failure
+
+Failed runs are logged too: the `except` block in `main()` writes a record with the error message and null prediction fields, so a failure never shows up only as an absence.
+
+Eleven entries from a real session (`logs/predictions.jsonl`):
+
+```
+{"timestamp": "2026-11-16T06:50:03.934970+00:00", "input_text": "Australia beat India by 6 wickets in the 2023 World Cup final in Ahmedabad.", "predicted_label": "claim", "confidence": 0.2743518352508545, "latency_ms": 33.74, "error": null}
+{"timestamp": "2026-11-16T06:51:59.976058+00:00", "input_text": "Kohli has scored 55 ODI centuries, most ever", "predicted_label": "claim", "confidence": 0.279968798160553, "latency_ms": 47.61, "error": null}
+{"timestamp": "2026-11-16T06:51:59.995487+00:00", "input_text": "Greatest batsman of all time?", "predicted_label": "claim", "confidence": 0.2818601429462433, "latency_ms": 18.88, "error": null}
+{"timestamp": "2026-11-16T06:52:00.012371+00:00", "input_text": "Such a beautiful innings", "predicted_label": "joke", "confidence": 0.31528088450431824, "latency_ms": 15.5, "error": null}
+{"timestamp": "2026-11-16T06:52:00.038064+00:00", "input_text": "Koach still unbeaten at Trivandrum", "predicted_label": "joke", "confidence": 0.28912147879600525, "latency_ms": 24.77, "error": null}
+{"timestamp": "2026-11-16T06:52:00.064741+00:00", "input_text": "Completed 15k ODI runs off 75 balls", "predicted_label": "fact", "confidence": 0.28807517886161804, "latency_ms": 25.27, "error": null}
+{"timestamp": "2026-11-16T06:52:00.088206+00:00", "input_text": "No one who watched that believes he can't dominate", "predicted_label": "joke", "confidence": 0.3240014612674713, "latency_ms": 22.05, "error": null}
+{"timestamp": "2026-11-16T06:52:00.112465+00:00", "input_text": "Love it, can't stop smiling after watching him play", "predicted_label": "reaction", "confidence": 0.3119729161262512, "latency_ms": 24.05, "error": null}
+{"timestamp": "2026-11-16T06:52:00.133285+00:00", "input_text": "Lmao what a fraud", "predicted_label": "joke", "confidence": 0.3583769202232361, "latency_ms": 19.46, "error": null}
+{"timestamp": "2026-11-16T06:52:00.155003+00:00", "input_text": "Starc took 6 wickets today, what a spell", "predicted_label": "claim", "confidence": 0.28454363346099854, "latency_ms": 20.6, "error": null}
+{"timestamp": "2026-11-16T06:52:00.185568+00:00", "input_text": "Last 2 years averages 38 away from home", "predicted_label": "claim", "confidence": 0.29028552770614624, "latency_ms": 30.26, "error": null}
+```
+
+One failed run: an over-length input rejected after the improvement (line 111 of `logs/predictions.jsonl`; the 1,440-character `input_text` is shortened here for readability):
+
+```
+{"timestamp": "2026-11-16T06:48:35.819409+00:00", "input_text": "Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and ... [1,440 chars total]", "predicted_label": null, "confidence": null, "latency_ms": null, "error": "input too long (1440 chars, max 1000)"}
+```
+
+**What It Costs**
+
+TakeMeter runs a local DistilBERT model on CPU, so there is no API spend: the real cost is seconds of compute.
+
+How I measured it: I ran `measure_cost.py`, which sends 10 comments through `classify()` in one process and logs `latency_ms` for each. From those 10 logged entries (06:51:59 to 06:52:00 in `logs/predictions.jsonl`, shown above):
+
+47.61 + 18.88 + 15.50 + 24.77 + 25.27 + 22.05 + 24.05 + 19.46 + 20.60 + 30.26 = 248.45 ms
+
+248.45 ms / 10 = **24.85 ms of CPU time per prediction**, $0 API cost.
+
+For 100 people a day, one prediction each: 100 × 24.85 ms = 2,485 ms ≈ **2.5 seconds of CPU per day**.
+
+Caveat: this excludes model loading. Each `python inference.py` command reloads the model from disk, which takes far longer than a prediction, so for real use the model should be loaded once and kept in memory, which is what `measure_cost.py` and `run_trials.py` already do.
+
+**Run Log and Verdicts**
+
+Criteria are in `criteria.md` (Capstone section), committed in `1905f60` ("add capstone criteria") before any results. Results were first committed in "capstone: first results, 3 trials". All trials were produced by `run_trials.py`, which calls `load_model()`, `classify()` and `log_entry()` from `inference.py` in-process for criteria 1, 2 and 5, and runs `python inference.py` as separate commands for criteria 3 and 4.
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Every call writes a complete log entry | 10 of 10 | 10/10 | 10/10 | 10/10 | MET |
+| 2. Median latency under 40ms | < 40ms each run | 29.38ms | 47.00ms | 17.54ms | MISSED |
+| 3. Bad input logs an error (empty / long) | 5/5 and 5/5 | 5/5, 0/5 | 5/5, 0/5 | 5/5, 0/5 | MISSED |
+| 4. Same input gives same output | 3 of 3 identical | 3/3 | 3/3 | 3/3 | MET |
+| 5. Stat-based comments labeled `fact` | ≥ 3 of 5 | 0/5 | 0/5 | 0/5 | MISSED |
+
+Real output, trial 1 (`python run_trials.py 1`, saved to `capstone_trial1.json`):
+
+```
+C1 complete log entries:    10/10
+C2 median latency_ms:       29.38  (all: [730.2, 31.3, 29.0, 25.0, 20.4, 40.1, 115.6, 29.7, 25.1, 28.4])
+C3 empty -> logged error:   5/5
+C3 long  -> logged error:   0/5
+C4 identical outputs:       3/3  [('joke', 0.31), ('joke', 0.31), ('joke', 0.31)]
+C5 fact labels:             0/5  ['claim', 'claim', 'claim', 'claim', 'claim']
+```
+
+Trial 2, criterion 2 line (`capstone_trial2.json`):
+
+```
+C2 median latency_ms:       47.00  (all: [123.8, 49.2, 46.1, 47.3, 46.7, 35.9, 44.9, 59.9, 45.6, 143.8])
+```
+
+Trial 3, criterion 2 line (`capstone_trial3.json`):
+
+```
+C2 median latency_ms:       17.54  (all: [40.4, 17.6, 15.0, 17.7, 17.5, 17.9, 12.0, 17.5, 18.9, 17.3])
+```
+
+C4 and C5 came out identical in all three trials. That is expected: the model runs in eval mode with no sampling, and criterion 4 confirms the pipeline is deterministic. The trials were real re-runs, as the varying latencies show.
+
+**Diagnoses**
+
+*Criterion 2 (MISSED).* Stage: the CPU forward pass in `classify()`. Mechanism: in trial 2 the whole distribution shifted up (most calls 45–60ms versus 17–30ms in trials 1 and 3), not just one outlier, so this is machine-level load on a shared laptop rather than anything in the code path. My target assumed a quiet machine. The first call of every trial is also a warm-up spike (730, 124 and 40ms), but the median absorbs that.
+
+*Criterion 3 (MISSED, long input only).* Stage: input validation in `main()` in `inference.py`. Mechanism: `main()` only rejected empty text. `classify()` tokenizes with `truncation=True, max_length=128`, so a 1,440-character input was silently cut to 128 tokens and classified with a normal-looking answer. This is the exact silent failure the criterion was written to catch.
+
+*Criterion 5 (MISSED).* Stage: the trained model itself, not the deployment layer. Mechanism: in the Project 3 after-run, `fact` already had F1 = 0.000 on every seed, so the model never learned to predict `fact`. All 5 stat-based comments went to `claim`, the old majority class. The deployment layer passes the model's output through faithfully, as criteria 1 and 4 confirm.
+
+*Pattern:* the three misses come from three different stages (machine load, input validation, the model), so they are three separate problems, not one problem with three symptoms.
+
+**The Improvement**
+
+What I changed: one fix in `main()` in `inference.py`, aimed at the criterion 3 diagnosis. I added a length check right after the empty-input check:
+
+```python
+if len(text) > 1000:
+    raise ValueError(f"input too long ({len(text)} chars, max 1000)")
+```
+
+Long inputs now raise before the model loads, so the existing `except` block in `main()` writes a log entry with a non-empty `error` field instead of silently truncating to 128 tokens.
+
+Run log after the fix (same script, `python run_trials.py after1/after2/after3`, nothing else changed; committed in "capstone: fix long-input validation, after results"):
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Every call writes a complete log entry | 10 of 10 | 10/10 | 10/10 | 10/10 | MET |
+| 2. Median latency under 40ms | < 40ms each run | 18.35ms | 19.06ms | 19.11ms | MET |
+| 3. Bad input logs an error (empty / long) | 5/5 and 5/5 | 5/5, 5/5 | 5/5, 5/5 | 5/5, 5/5 | MET |
+| 4. Same input gives same output | 3 of 3 identical | 3/3 | 3/3 | 3/3 | MET |
+| 5. Stat-based comments labeled `fact` | ≥ 3 of 5 | 0/5 | 0/5 | 0/5 | MISSED |
+
+Real output, trial after3 (`capstone_trialafter3.json`):
+
+```
+C1 complete log entries:    10/10
+C2 median latency_ms:       19.11  (all: [37.6, 19.7, 17.8, 19.9, 17.5, 14.4, 15.7, 20.5, 19.9, 18.6])
+C3 empty -> logged error:   5/5
+C3 long  -> logged error:   5/5
+C4 identical outputs:       3/3  [('joke', 0.31), ('joke', 0.31), ('joke', 0.31)]
+C5 fact labels:             0/5  ['claim', 'claim', 'claim', 'claim', 'claim']
+```
+
+Did it help: yes, for the criterion it targeted. Criterion 3 went from MISSED (long input 0/5 on every trial) to MET (5/5 on every trial). Criteria 1 and 4 stayed MET, so the fix caused no regression. Criterion 5 did not change, which is expected: its cause is the trained model, and this fix only touched input validation. Criterion 2 is not affected by this change, because the length check runs before the model and never touches normal-length inputs; any movement there is machine load, consistent with the original diagnosis. Criterion 2 also came out MET in the after run, but I don’t credit the fix for that: the length check never runs on normal-length inputs, so the change is machine load varying between sessions, which supports my original diagnosis.
+
+**What's Still Broken**
+
+*Criterion 2 (latency):* missed in the before run because trial 2's whole distribution shifted up under machine load. What I'd do: rerun on an idle machine with a fixed thread count (`torch.set_num_threads`), and report warm and cold latency separately. Why I stopped: the unit allows one improvement, and criterion 3 was the clearer bug in my own code.
+
+*Criterion 5 (fact label):* still 0/5 after the fix, because the cause is the trained model, not the deployment layer. Every stat-based comment goes to `claim`. Confidence scores in the log sit around 0.27–0.36, barely above the 0.25 of a random four-way guess, so the model is close to guessing on everything. What I'd do: add about 30 more `fact` examples and retrain, the same fix that took `joke` from F1 0.00 to 0.55–0.64 in Project 3. Why I stopped: retraining was declared out of scope for this unit.
+
+*Targets that may have been set too low:* criteria 1 and 4 passed every trial. Criterion 4 only checks one input; I'd tighten it to 10 different inputs, each identical across 3 runs.
+
+**What I'd do next:** add `fact` examples and retrain first. The whole point of TakeMeter is separating comments that bring evidence from ones that don't, and right now the deployed system can never output `fact`, so the instrumentation is faithfully logging a model that can't do its main job.
+
+**How I Used AI**
+
+*Moment 1: checking my criteria before committing them.* I asked Claude to run the self-check questions on my five capstone criteria without rewriting them. It pointed out that criterion 3 didn't define what an "error entry" was, criterion 4 didn't name the input, and criterion 5's test comments weren't written down, so I could have picked them after seeing results. I fixed all three before committing. Claude also drafted the 5 stat-based test inputs for criterion 5 when I was short on time; I checked each one was a `fact` by my own definition before committing, and changed the criterion's wording from "comments I write myself" to "the 5 fixed comments listed below."
+
+*Moment 2: the trial runner and the write-up.* Claude wrote `run_trials.py` from my `inference.py` and my criteria. I ran it three times before the fix and three times after. It also suggested the long-input length check as the improvement, which came directly from the criterion 3 diagnosis. Under deadline pressure, Claude also assembled most of the capstone README text from my actual results; I checked every number against my terminal output and logs.
