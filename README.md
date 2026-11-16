@@ -452,7 +452,7 @@ Out of scope: I am not retraining or fine-tuning the model, not changing the fou
 
 **Running It**
 
-Path B (local with logs). The model runs locally with PyTorch, and loading the model plus PyTorch needs more memory than the free host's 512 MB. The exact start command and environment are in RUNNING.md.
+Path B (local with logs). The model runs locally with PyTorch, and loading the model plus PyTorch needs more memory than the free host's 512 MB. The exact start command, environment, and model setup are in RUNNING.md under "Capstone: running inference". The trial results are in `capstone_trial*.json`, and the full run record is in `logs/predictions.jsonl`.
 
 **Instrumentation**
 
