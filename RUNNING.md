@@ -404,3 +404,20 @@ weight files are too large for a reasonable repo size). To regenerate it:
   on CPU includes some one-time thread-pool setup overhead; later calls are
   faster. This is why the capstone criteria distinguish median from mean
   latency.
+
+
+## Capstone: running inference
+
+**Start command** (from the project folder, with `.venv` active):
+
+```
+python inference.py "Kohli's cover drive is the best shot in world cricket"
+```
+
+Each call prints the result as JSON and appends one record to `logs/predictions.jsonl`.
+
+**Environment:** Python 3.12.7, dependencies pinned in `requirements.txt` (`pip install -r requirements.txt`), CPU only (PyTorch 2.14.1+cpu).
+
+**Model files:** the trained model lives in `./model` (about 256 MB) and is gitignored because of its size. On a clean checkout, run the notebook's training section, which saves it with `trainer.save_model('./model')` and `tokenizer.save_pretrained('./model')` (see "The model folder" above).
+
+**Re-running the capstone tests:** `python run_trials.py 1` writes `capstone_trial1.json` and prints the run log numbers for all five criteria.
