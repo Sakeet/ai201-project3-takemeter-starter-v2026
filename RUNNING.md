@@ -329,3 +329,78 @@ before you push.
 
 **Do not delete and recreate this repository.** You submit the same URL both
 units.
+
+
+---
+
+# Capstone — Deployment Extension (Shape A)
+
+## Path: B — Local, with logs
+
+This extension deploys TakeMeter's trained classifier as a local inference
+service. It does not run on hosted infrastructure, because the model
+(DistilBERT, ~260MB) plus PyTorch dependencies exceed the 512MB memory limit
+of the free hosting tier this course uses.
+
+## What's new
+
+Two new files, on top of everything above:
+
+| File | What it does |
+|---|---|
+| `inference.py` | Loads the trained model once, classifies one piece of text, logs the result |
+| `measure_cost.py` | Runs 10 predictions through the loaded model and reports average/median/min/max latency |
+
+## Starting it
+
+From the repo root, with the virtual environment activated:
+
+```powershell
+.venv\Scripts\Activate.ps1
+python inference.py "some comment text here"
+```
+
+This loads the model once per invocation, classifies the input, prints a
+JSON result, and appends a structured log entry to `logs/predictions.jsonl`.
+
+## Measuring cost
+
+```powershell
+python measure_cost.py
+```
+
+Runs 10 predictions through the loaded model, logs each one, and prints
+average/median/min/max latency in milliseconds — this is the measured
+cost-per-run number reported in the README's capstone section.
+
+## The model folder
+
+`inference.py` and `measure_cost.py` both expect a `./model/` folder
+containing the trained weights, saved via:
+
+```python
+trainer.save_model('./model')
+tokenizer.save_pretrained('./model')
+```
+
+This folder is **not committed to git** (added to `.gitignore` — model
+weight files are too large for a reasonable repo size). To regenerate it:
+
+1. Open `takemeter.ipynb`, select the `.venv` kernel for this project.
+2. Run Section 1 through Section 4 (training) — about 2 minutes on CPU.
+3. Run the save cell above (add it if it's not already in your notebook).
+4. Confirm a `model/` folder appears containing `config.json` and model
+   weight files.
+
+## Troubleshooting (capstone-specific)
+
+- **"No saved model found" from `inference.py`** — the `./model` folder
+  doesn't exist yet. Follow "The model folder" above.
+- **Wrong/scrambled labels** — check that `LABELS` at the top of
+  `inference.py` exactly matches the label order used in the notebook's
+  `LABELS` list during training. A mismatch here silently produces wrong
+  predictions with no error raised.
+- **First call much slower than the rest** — normal. The first forward pass
+  on CPU includes some one-time thread-pool setup overhead; later calls are
+  faster. This is why the capstone criteria distinguish median from mean
+  latency.
