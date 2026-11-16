@@ -1,0 +1,45 @@
+{
+  "load_ms": 20184.548999997787,
+  "breakdown": {
+    "tokenize": {
+      "median": 0.42,
+      "p95": 0.98
+    },
+    "forward": {
+      "median": 25.25,
+      "p95": 39.22
+    },
+    "postprocess": {
+      "median": 0.07,
+      "p95": 0.1
+    },
+    "log_write": {
+      "median": 0.96,
+      "p95": 1.99
+    },
+    "total": {
+      "median": 26.85,
+      "p95": 41.7
+    }
+  },
+  "load_normal": {
+    "rate": 1,
+    "requests": 30,
+    "median_ms": 24.23,
+    "p95_ms": 43.67,
+    "max_ms": 76.93,
+    "errors": 0,
+    "log_entries_written": 30,
+    "wall_s": 30.0
+  },
+  "load_10x": {
+    "rate": 10,
+    "requests": 30,
+    "median_ms": 17.92,
+    "p95_ms": 27.69,
+    "max_ms": 65.99,
+    "errors": 0,
+    "log_entries_written": 30,
+    "wall_s": 3.0
+  }
+}
