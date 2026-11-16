@@ -84,6 +84,8 @@ def main():
     try:
         if not text.strip():
             raise ValueError("empty input text")
+        if len(text) > 1000:
+            raise ValueError(f"input too long ({len(text)} chars, max 1000)")
 
         tokenizer, model, device = load_model()
         label, confidence, latency_ms = classify(text, tokenizer, model, device)
