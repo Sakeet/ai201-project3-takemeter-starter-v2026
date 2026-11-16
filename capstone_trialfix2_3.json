@@ -1,0 +1,94 @@
+{
+  "trial": "fix2_3",
+  "c1_pass": 10,
+  "c1_sample_entry": {
+    "timestamp": "2026-11-16T17:55:53.339801+00:00",
+    "input_text": "Kohli's cover drive is the best shot in world cricket",
+    "predicted_label": "claim",
+    "confidence": 0.28120627999305725,
+    "latency_ms": 18.16,
+    "error": null
+  },
+  "c2_median_ms": 18.89,
+  "c2_latencies": [
+    18.16,
+    18.82,
+    18.24,
+    20.77,
+    18.26,
+    19.27,
+    23.62,
+    18.96,
+    18.26,
+    19.36
+  ],
+  "c3_empty_pass": 5,
+  "c3_long_pass": 5,
+  "c3_empty_sample": {
+    "pass": true,
+    "crashed": false,
+    "entry": {
+      "timestamp": "2026-11-16T17:55:53.761924+00:00",
+      "input_text": "",
+      "predicted_label": null,
+      "confidence": null,
+      "latency_ms": null,
+      "error": "empty input text"
+    }
+  },
+  "c3_long_sample": {
+    "pass": true,
+    "crashed": false,
+    "entry": {
+      "timestamp": "2026-11-16T17:55:54.160429+00:00",
+      "input_text": "Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and Kohli is the greatest chaser in ODI history and ",
+      "predicted_label": null,
+      "confidence": null,
+      "latency_ms": null,
+      "error": "input too long (1440 chars, max 1000)"
+    }
+  },
+  "c4_runs": [
+    [
+      "joke",
+      0.31
+    ],
+    [
+      "joke",
+      0.31
+    ],
+    [
+      "joke",
+      0.31
+    ]
+  ],
+  "c4_pass": true,
+  "c5_count": 0,
+  "c5_labels": [
+    {
+      "text": "Kohli became the first batter to score 50 ODI centuries, in the 2023 World Cup semi-final.",
+      "label": "claim",
+      "confidence": 0.277
+    },
+    {
+      "text": "Sachin Tendulkar finished his career with 100 international centuries.",
+      "label": "claim",
+      "confidence": 0.277
+    },
+    {
+      "text": "Rohit Sharma's 264 against Sri Lanka in 2014 is the highest individual score in ODI history.",
+      "label": "claim",
+      "confidence": 0.284
+    },
+    {
+      "text": "Muttiah Muralitharan took 800 Test wickets, more than any other bowler.",
+      "label": "claim",
+      "confidence": 0.278
+    },
+    {
+      "text": "Australia beat India by 6 wickets in the 2023 World Cup final in Ahmedabad.",
+      "label": "claim",
+      "confidence": 0.274
+    }
+  ]
+}

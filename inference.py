@@ -40,8 +40,11 @@ def load_model():
     tokenizer = AutoTokenizer.from_pretrained(path)
     model = AutoModelForSequenceClassification.from_pretrained(path)
     model.eval()
+    torch.set_num_threads(4)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
+    with torch.no_grad():  # warm-up so the first real request isn't a cold start
+        model(**tokenizer("warm up", return_tensors="pt").to(device))
     return tokenizer, model, device
 
 
