@@ -437,3 +437,16 @@ I designed four labels meant to separate evidence (`fact`), opinion (`claim`), f
 ---
 
 📖 **How to run this project: [RUNNING.md](RUNNING.md)**
+
+## Capstone
+
+**What This Extends**
+TakeMeter (Project 3), the r/Cricket comment classifier. New this unit: a command-line inference script (`inference.py`) that loads the trained model, classifies a comment, and writes a structured JSONL log entry for every call, plus a script (`measure_cost.py`) that measures the cost of one prediction.
+
+**The Shape**
+Shape A — Deploy and instrument. I took a classifier that only ever ran inside my notebook and gave it a run path outside the editor, structured logging of every prediction (timestamp, input, label, confidence, latency), and a measured per-prediction cost.
+
+Out of scope: I am not retraining or fine-tuning the model, not changing the four labels or the labelled data, and not hosting it online or building a web interface.
+
+**Running It**
+Path B (local with logs). The model runs locally with PyTorch, and loading the model plus PyTorch needs more memory than the free host's 512 MB. The exact start command and environment are in RUNNING.md.
