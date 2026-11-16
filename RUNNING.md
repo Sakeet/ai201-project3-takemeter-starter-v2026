@@ -421,3 +421,6 @@ Each call prints the result as JSON and appends one record to `logs/predictions.
 **Model files:** the trained model lives in `./model` (about 256 MB) and is gitignored because of its size. On a clean checkout, run the notebook's training section, which saves it with `trainer.save_model('./model')` and `tokenizer.save_pretrained('./model')` (see "The model folder" above).
 
 **Re-running the capstone tests:** `python run_trials.py 1` writes `capstone_trial1.json` and prints the run log numbers for all five criteria.
+
+
+**Clean-checkout test (2026-11-16):** I cloned the repo into a new folder and ran the start command. It failed with "No saved model found", because `model/` is gitignored, so a fresh clone has no model. A reader must train the model with the notebook (or obtain the 256 MB `model/` folder) before the start command works.

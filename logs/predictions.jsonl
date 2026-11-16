@@ -177,3 +177,13 @@
 {"timestamp": "2026-11-16T06:50:03.864233+00:00", "input_text": "Rohit Sharma's 264 against Sri Lanka in 2014 is the highest individual score in ODI history.", "predicted_label": "claim", "confidence": 0.2843950390815735, "latency_ms": 34.85, "error": null}
 {"timestamp": "2026-11-16T06:50:03.899922+00:00", "input_text": "Muttiah Muralitharan took 800 Test wickets, more than any other bowler.", "predicted_label": "claim", "confidence": 0.27832549810409546, "latency_ms": 35.01, "error": null}
 {"timestamp": "2026-11-16T06:50:03.934970+00:00", "input_text": "Australia beat India by 6 wickets in the 2023 World Cup final in Ahmedabad.", "predicted_label": "claim", "confidence": 0.2743518352508545, "latency_ms": 33.74, "error": null}
+{"timestamp": "2026-11-16T06:51:59.976058+00:00", "input_text": "Kohli has scored 55 ODI centuries, most ever", "predicted_label": "claim", "confidence": 0.279968798160553, "latency_ms": 47.61, "error": null}
+{"timestamp": "2026-11-16T06:51:59.995487+00:00", "input_text": "Greatest batsman of all time?", "predicted_label": "claim", "confidence": 0.2818601429462433, "latency_ms": 18.88, "error": null}
+{"timestamp": "2026-11-16T06:52:00.012371+00:00", "input_text": "Such a beautiful innings", "predicted_label": "joke", "confidence": 0.31528088450431824, "latency_ms": 15.5, "error": null}
+{"timestamp": "2026-11-16T06:52:00.038064+00:00", "input_text": "Koach still unbeaten at Trivandrum", "predicted_label": "joke", "confidence": 0.28912147879600525, "latency_ms": 24.77, "error": null}
+{"timestamp": "2026-11-16T06:52:00.064741+00:00", "input_text": "Completed 15k ODI runs off 75 balls", "predicted_label": "fact", "confidence": 0.28807517886161804, "latency_ms": 25.27, "error": null}
+{"timestamp": "2026-11-16T06:52:00.088206+00:00", "input_text": "No one who watched that believes he can't dominate", "predicted_label": "joke", "confidence": 0.3240014612674713, "latency_ms": 22.05, "error": null}
+{"timestamp": "2026-11-16T06:52:00.112465+00:00", "input_text": "Love it, can't stop smiling after watching him play", "predicted_label": "reaction", "confidence": 0.3119729161262512, "latency_ms": 24.05, "error": null}
+{"timestamp": "2026-11-16T06:52:00.133285+00:00", "input_text": "Lmao what a fraud", "predicted_label": "joke", "confidence": 0.3583769202232361, "latency_ms": 19.46, "error": null}
+{"timestamp": "2026-11-16T06:52:00.155003+00:00", "input_text": "Starc took 6 wickets today, what a spell", "predicted_label": "claim", "confidence": 0.28454363346099854, "latency_ms": 20.6, "error": null}
+{"timestamp": "2026-11-16T06:52:00.185568+00:00", "input_text": "Last 2 years averages 38 away from home", "predicted_label": "claim", "confidence": 0.29028552770614624, "latency_ms": 30.26, "error": null}
