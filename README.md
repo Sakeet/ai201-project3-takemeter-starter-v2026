@@ -644,3 +644,41 @@ Real output:
     10/s  median 17.92ms  p95 27.69ms  max 65.99ms  errors 0  log entries 30/30  wall 3.0s
 
 What changed: nothing broke. There were zero errors and every request was logged, even with requests from multiple threads appending to the same file. The surprise is that latency *dropped* at 10×: median 24.23 → 17.92 ms. At 10/s each request (~25 ms) finishes well before the next arrives (every 100 ms), so there is no queueing. My best explanation is that at 1/s the CPU sits idle for about 975 ms between requests and slows down, so each request starts from a colder state, while at 10/s it stays busy. I haven't proven this, but it fits criterion 2's diagnosis: my latency depends on the machine's state as much as on my code.
+
+**Stretch: Second measured improvement**
+
+What I changed: two lines in `load_model()` in `inference.py`, aimed at the criterion 2 diagnosis (latency depends on machine state, plus a cold-start spike on the first call):
+
+```python
+torch.set_num_threads(4)
+with torch.no_grad():  # warm-up so the first real request isn't a cold start
+    model(**tokenizer("warm up", return_tensors="pt").to(device))
+```
+
+Run log after this change (`python run_trials.py fix2_1/fix2_2/fix2_3`, saved to `capstone_trialfix2_*.json`):
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Every call writes a complete log entry | 10 of 10 | 10/10 | 10/10 | 10/10 | MET |
+| 2. Median latency under 40ms | < 40ms each run | 24.25ms | 19.09ms | 18.89ms | MET |
+| 3. Bad input logs an error (empty / long) | 5/5 and 5/5 | 5/5, 5/5 | 5/5, 5/5 | 5/5, 5/5 | MET |
+| 4. Same input gives same output | 3 of 3 identical | 3/3 | 3/3 | 3/3 | MET |
+| 5. Stat-based comments labeled `fact` | ≥ 3 of 5 | 0/5 | 0/5 | 0/5 | MISSED |
+
+Real output, criterion 2 lines:
+
+    fix2_1  C2 median latency_ms:  24.25  (all: [35.3, 22.6, 23.3, 21.5, 20.7, 24.1, 35.1, 28.7, 24.4, 36.0])
+    fix2_2  C2 median latency_ms:  19.09  (all: [21.5, 18.4, 21.6, 20.2, 19.8, 17.6, 17.9, 20.5, 17.8, 16.0])
+    fix2_3  C2 median latency_ms:  18.89  (all: [18.2, 18.8, 18.2, 20.8, 18.3, 19.3, 23.6, 19.0, 18.3, 19.4])
+
+Criterion 2 across all three result sets (ms):
+
+| | Trial 1 | Trial 2 | Trial 3 |
+|---|---|---|---|
+| First call: before | 730.2 | 123.8 | 40.4 |
+| First call: fix2 | 35.3 | 21.5 | 18.2 |
+| Median: before | 29.38 | 47.00 | 17.54 |
+| Median: after (length fix) | 18.35 | 19.06 | 19.11 |
+| Median: fix2 | 24.25 | 19.09 | 18.89 |
+
+Did it help: partly. The warm-up did what it was for. The first call of every trial dropped from 730, 124 and 40 ms to 35, 22 and 18 ms, so the cold-start spike the criterion 2 diagnosis named is gone; the cost has moved into `load_model()`, where it is paid once per process. The thread-count change did not lower the median: fix2 medians (18.89–24.25 ms) are no better than the after set (18.35–19.11 ms), and trial fix2_1 shows the whole distribution shifting up again (20–36 ms), the same machine-state pattern as before-trial 2. So fixing threads did not remove the sensitivity to machine load; it only rules out thread count as the cause. Criterion 4 stayed 3/3 identical, so changing the thread count did not introduce nondeterminism, and criteria 1 and 3 stayed MET with no regression.
