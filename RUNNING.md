@@ -1,5 +1,7 @@
 # Running TakeMeter
 
+> **Classmates trying the capstone demo:** skip to [Quick start for classmates](#quick-start-for-classmates-windows-powershell) near the bottom. You don't need the notebook.
+
 Everything about how the starter works.
 
 This pair is different from the last two: **you train a model.** It runs on
@@ -408,6 +410,31 @@ weight files are too large for a reasonable repo size). To regenerate it:
 
 ## Capstone: running inference
 
+### Quick start for classmates (Windows PowerShell)
+
+```
+git clone https://github.com/Sakeet/ai201-project3-takemeter-starter-v2026.git
+cd ai201-project3-takemeter-starter-v2026
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+$ProgressPreference = 'SilentlyContinue'
+Invoke-WebRequest https://github.com/Sakeet/ai201-project3-takemeter-starter-v2026/releases/download/capstone-model/model.zip -OutFile model.zip
+Expand-Archive model.zip -DestinationPath .
+python inference.py "Kohli's cover drive is the best shot in world cricket"
+```
+
+**Mac / Linux:** use `python3 -m venv .venv`, `source .venv/bin/activate`, download `model.zip` from the Releases page, and run `unzip model.zip`.
+
+**Expected:** about 20 seconds of loading (the model loads once per command), then a JSON result with `predicted_label`, `confidence` and `latency_ms`. A new line is added to `logs/predictions.jsonl`.
+
+**Try the bad path too:** `python inference.py ""` should print an error and log it, not crash.
+
+**If it fails:**
+- "No saved model found": `model/` isn't next to `inference.py`. Check that `model/config.json` exists.
+- PowerShell won't activate the venv: run `Set-ExecutionPolicy -Scope Process Bypass` first.
+- `pip install` takes a while: PyTorch is large, so that's normal.
+
 **Start command** (from the project folder, with `.venv` active):
 
 ```
@@ -418,7 +445,7 @@ Each call prints the result as JSON and appends one record to `logs/predictions.
 
 **Environment:** Python 3.12.7, dependencies pinned in `requirements.txt` (`pip install -r requirements.txt`), CPU only (PyTorch 2.14.1+cpu).
 
-**Model files:** the trained model lives in `./model` (about 256 MB) and is gitignored because of its size. On a clean checkout, run the notebook's training section, which saves it with `trainer.save_model('./model')` and `tokenizer.save_pretrained('./model')` (see "The model folder" above).
+**Model files:** the trained model lives in `./model` (about 256 MB) and is gitignored because of its size. The quickest way to get it is the `model.zip` release asset (see the quick start above). You can also regenerate it by training with the notebook (see "The model folder" above).
 
 **Re-running the capstone tests:** `python run_trials.py 1` writes `capstone_trial1.json` and prints the run log numbers for all five criteria.
 
