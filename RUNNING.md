@@ -428,7 +428,7 @@ python inference.py "Kohli's cover drive is the best shot in world cricket"
 
 **Expected:** about 20 seconds of loading (the model loads once per command), then a JSON result with `predicted_label`, `confidence` and `latency_ms`. A new line is added to `logs/predictions.jsonl`.
 
-**Try the bad path too:** `python inference.py ""` should print an error and log it, not crash.
+**Try the bad path too:** `python inference.py " "` (a single space) should print `ERROR: empty input text` and log it, not crash. Note: in Windows PowerShell, `""` is dropped before reaching Python, so you'd see the usage message instead.
 
 **If it fails:**
 - "No saved model found": `model/` isn't next to `inference.py`. Check that `model/config.json` exists.
@@ -451,3 +451,5 @@ Each call prints the result as JSON and appends one record to `logs/predictions.
 
 
 **Clean-checkout test (2026-11-16):** I cloned the repo into a new folder and ran the start command. It failed with "No saved model found", because `model/` is gitignored, so a fresh clone has no model. A reader must train the model with the notebook (or obtain the 256 MB `model/` folder) before the start command works.
+
+**Clean-checkout test (2026-11-18):** following the quick start from a fresh clone, with a new venv, `pip install -r requirements.txt` and the release download, the start command worked and printed a prediction (`claim`, confidence 0.28, 31.33 ms, no error), and `python inference.py " "` printed `ERROR: empty input text`.
