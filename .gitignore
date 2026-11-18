@@ -29,3 +29,4 @@ Thumbs.db
 # deliberately NOT ignored. They're evidence the run actually happened, and
 # they're part of what gets graded. Commit them.
 model/
+model.zip
